@@ -14,9 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function getData(f){
   let url = "http://localhost:3000/data/ajax";
-  if (f != ''){
-    url += '?name=' + f;
-  }
   fetch(url)
   .then(
     res => res.json(),
@@ -29,17 +26,30 @@ function getData(f){
   )
   .then(
     (result) => {
+      console.log(result);
       let arr = [];
-      for(let n in result){
-        let val = result[n];
-        arr.push(<li class="list-group-item">{val.id}:{val.name} ({val.mail})</li>);
+      for(let n in result.rss.channel.item){
+        let data = result.rss.channel.item[n];
+        arr.push(
+          <tr>
+            <th>{data.title}</th>
+            <td class="small">{data.pubDate}</td>
+          </tr>
+        );
       }
       const el = (
-        <ul class="list-group">{arr}</ul>
+        <table class="table mt-4">
+          <thead class="thead-dark">
+          <tr><th><a href={data.link}>{data.title}</a></th>
+          <th>Date</th></tr>
+          </thead>
+          <tbody>{arr}</tbody>
+          </table>
       );
       ReactDOM.render(el, target_dom);
     },
     (error) => {
+      console.log(error);
       const el = (
         <p>ERROR!!</p>
       );
